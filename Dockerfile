@@ -1,14 +1,16 @@
-# Use the official OpenJDK base image
-FROM openjdk:22
-
-# Set working directory in the container
+FROM maven:3-openjdk-22 AS build
 WORKDIR /app
 
-# Copy the JAR file into the container
-COPY target/PMS_BE-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Expose the application port
+
+# Run stage
+
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
+COPY --from=build /app/target/PMS_BE-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
