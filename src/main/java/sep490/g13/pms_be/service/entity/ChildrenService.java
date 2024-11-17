@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sep490.g13.pms_be.entities.*;
 import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.exception.other.OutRangeClassException;
+import sep490.g13.pms_be.model.request.admission_application.ApprovedTransportApplication;
 import sep490.g13.pms_be.model.request.children.AddChildrenRequest;
 import sep490.g13.pms_be.model.response.children.*;
 import sep490.g13.pms_be.repository.*;
@@ -62,6 +63,8 @@ public class ChildrenService {
 
     @Autowired
     private StopLocationRepo stopLocationRepo;
+    @Autowired
+    private RouteSubmittedApplicationRepo routeSubmittedApplicationRepo;
 
     @Transactional
     public Children addChildren(AddChildrenRequest request, MultipartFile image) {
@@ -241,6 +244,51 @@ public class ChildrenService {
             default:
                 throw new IllegalArgumentException("Invalid service type: " + service);
         }
+    }
+
+    @Transactional
+    public void registerTransport(ApprovedTransportApplication request) {
+        Children children = childrenRepo.findById(request.getChildrenId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của trẻ"));
+        Route route = routeRepo.findById(request.getRouteId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của tuyến đường"));
+        StopLocation sl = stopLocationRepo.findById(request.getStopLocationId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy điểm dừng"));
+
+        Classes classes = childrenClassRepo.findClassByChildrenId(request.getChildrenId());
+        if (classes == null) {
+            throw new DataNotFoundException("Không tìm thấy dữ liệu của lớp học cho trẻ");
+        }
+
+        if (children.getIsRegisteredForTransport()) {
+            throw new IllegalArgumentException("Trẻ đã đăng ký dịch vụ đưa đón");
+        } else {
+            // Tìm danh sách xe theo tuyến, sắp xếp theo số chỗ giảm dần
+            List<Vehicle> vehicles = vehicleRepo.findAllByRouteIdOrderByNumberOfSeatsDesc(request.getRouteId());
+
+            // Thuật toán Best Fit: Tìm xe có số trẻ đăng ký gần với 90% số chỗ tối đa
+            Vehicle bestFitVehicle = getVehicle(vehicles);
+
+            // Xếp xe cho trẻ
+            children.setVehicle(bestFitVehicle);
+            children.setRegisteredStopLocation(sl);
+            children.setIsRegisteredForTransport(Boolean.TRUE);
+            childrenRepo.save(children);
+
+            // Cập nhật số trẻ đăng ký trên xe
+            int updatedCount = bestFitVehicle.getNumberChildrenRegistered() + 1;
+            vehicleRepo.updateNumberChildrenRegistered(bestFitVehicle.getId(), updatedCount);
+
+            // Lưu thông tin tuyến đường của trẻ
+            childrenRouteRepo.save(ChildrenRoute.builder().children(children).route(route).build());
+
+            // Cập nhật số trẻ đăng ký đưa đón trong lớp
+            classes.setCountChildrenRegisteredTransport(classes.getCountChildrenRegisteredTransport() + 1);
+            classRepo.save(classes);
+
+            routeSubmittedApplicationRepo.updateStatusById(request.getApplicationId(), "APPROVED");
+        }
+
     }
 
     private Vehicle getVehicle(List<Vehicle> vehicles) {

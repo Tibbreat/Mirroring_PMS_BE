@@ -10,11 +10,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RouteApplication {
+    private String applicationId;
     private String childrenId;
     private String childrenName;
     private String routeId;
     private String routeName;
     private String stopLocationId;
     private String stopLocationName;
+    private String vehicleName;
     private String status;
 }

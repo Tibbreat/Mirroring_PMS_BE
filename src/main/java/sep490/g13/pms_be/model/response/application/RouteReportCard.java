@@ -12,6 +12,7 @@ import lombok.Setter;
 public class RouteReportCard {
     private String routeId;
     private String routeName;
-    private String countRegistered;
-    private String countApproved;
+    private Long totalRegister;
+    private Long countRegistered;
+    private Long countApproved;
 }
