@@ -52,8 +52,11 @@ public class DataInitService {
         List<Route> allRoutes = routeRepo.findAll();
 
         // Add specific routes for assignment
+        routes.add(allRoutes.get(0));
         routes.add(allRoutes.get(1));
         routes.add(allRoutes.get(2));
+        routes.add(allRoutes.get(3));
+        routes.add(allRoutes.get(4));
 
         Random random = new Random();
 
