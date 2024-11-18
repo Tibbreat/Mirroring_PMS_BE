@@ -23,4 +23,7 @@ public class ChildrenListResponse {
 
     private String fatherName;
     private String motherName;
+
+    private boolean isRegisteredOnBoarding;
+    private boolean isRegisteredTransport;
 }

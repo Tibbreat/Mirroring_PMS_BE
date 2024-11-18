@@ -4,10 +4,12 @@ import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
+import jakarta.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sep490.g13.pms_be.entities.FoodRequest;
 import sep490.g13.pms_be.entities.FoodServiceProvider;
@@ -16,12 +18,14 @@ import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.model.request.PDFData.FoodRequestDataModel;
 import sep490.g13.pms_be.model.request.food.AddFoodRequest;
 import sep490.g13.pms_be.model.response.base.PagedResponseModel;
+import sep490.g13.pms_be.model.response.base.ResponseModel;
 import sep490.g13.pms_be.model.response.food.ListFoodResponse;
 import sep490.g13.pms_be.model.response.food.ListRequestItemsResponse;
 import sep490.g13.pms_be.repository.FoodRequestRepo;
 import sep490.g13.pms_be.repository.FoodServiceProviderRepo;
 import sep490.g13.pms_be.repository.SchoolRepo;
 import sep490.g13.pms_be.service.entity.FoodRequestService;
+import sep490.g13.pms_be.utils.ValidationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -47,8 +51,22 @@ public class FoodRequestController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<FoodRequest> add(@RequestBody AddFoodRequest request) {
-        return ResponseEntity.ok(foodRequestService.add(request));
+    public ResponseEntity<ResponseModel<?>> add(@RequestBody @Valid AddFoodRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String validationErrors = ValidationUtils.getValidationErrors(bindingResult);
+            return ResponseEntity.badRequest().body(
+                    ResponseModel.builder()
+                            .message("Thông tin lớp học không hợp lệ")
+                            .data(validationErrors)
+                            .build()
+            );
+        }
+        return ResponseEntity.ok(
+                ResponseModel.builder()
+                        .message("Thêm lớp học thành công")
+                        .data(foodRequestService.add(request))
+                        .build()
+        );
     }
 
     @GetMapping("/provider/{providerId}")

@@ -19,7 +19,8 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
     @Query("SELECT DISTINCT new sep490.g13.pms_be.model.response.children.ChildrenListResponse(" +
             "ch.id, ch.childName, ch.childBirthDate, sc.id, sc.classes.className, ch.imageUrl, ch.gender, " +
             "(SELECT rlFather.parentId.fullName FROM Relationship rlFather WHERE rlFather.childrenId.id = ch.id AND rlFather.relationship = 'Father'), " +
-            "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')) " +
+            "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')," +
+            "ch.isRegisteredForBoarding, ch.isRegisteredForTransport) " +
             "FROM Children ch " +
             "LEFT JOIN ch.childrenClasses sc " +
             "WHERE (:academicYear IS NULL OR sc.academicYear = :academicYear) " +
@@ -54,7 +55,8 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
     @Query("SELECT new sep490.g13.pms_be.model.response.children.ChildrenListResponse(" +
             "ch.id, ch.childName, ch.childBirthDate, sc.id,sc.classes.className, ch.imageUrl, ch.gender, " +
             "(SELECT rlFather.parentId.fullName FROM Relationship rlFather WHERE rlFather.childrenId.id = ch.id AND rlFather.relationship = 'Father'), " +
-            "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')) " +
+            "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')," +
+            "ch.isRegisteredForBoarding, ch.isRegisteredForTransport) " +
             "FROM Children ch " +
             "LEFT JOIN ch.childrenClasses sc " +
             "WHERE  sc.classes.id = :classId " +

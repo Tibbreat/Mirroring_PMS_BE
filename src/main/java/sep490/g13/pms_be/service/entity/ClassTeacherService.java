@@ -44,9 +44,8 @@ public class ClassTeacherService {
     }
 
 
-    public Page<Classes> getClassByTeacherId(String teacherId, int size, int page){
-        Pageable pageable = PageRequest.of(page, size);
-        return classTeacherRepo.findClassesByTeacherId(teacherId, pageable);
+    public List<Classes> getClassByTeacherId(String teacherId){
+        return classTeacherRepo.findClassesByTeacherId(teacherId);
     }
     public List<ClassOption> getClassesByTeacherAndSchoolYear(String teacherId, String schoolYear) {
         List<ClassTeacher> classTeachers = classTeacherRepo.findByTeacherIdAndSchoolYear(teacherId, schoolYear);

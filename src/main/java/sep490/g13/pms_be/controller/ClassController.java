@@ -53,6 +53,7 @@ public class ClassController {
         );
 
     }
+
     @GetMapping()
     public ResponseEntity<List<ClassListResponseWithNumberChildren>> getClasses(@RequestParam String academicYear) {
         List<ClassListResponseWithNumberChildren> classList = classService.getClasses(academicYear);
@@ -60,22 +61,9 @@ public class ClassController {
     }
 
     @GetMapping("/class/teacher/{teacherId}")
-    public ResponseEntity<PagedResponseModel<Classes>> getClassByTeacherId(
-            @PathVariable String teacherId,
-            @RequestParam int page) {
-        int size = 10;
-        Page<Classes> results = classTeacherService.getClassByTeacherId(teacherId, size, page - 1);
-        List<Classes> classes = results.getContent();
-        String msg = classes.isEmpty() ? "Không có dữ liệu" : "Tìm thấy" + results.getTotalElements() + "dữ liệu";
-
-        PagedResponseModel<Classes> pagedResponse = PagedResponseModel.<Classes>builder()
-                .page(page)
-                .size(size)
-                .msg(msg)
-                .total(results.getTotalElements())
-                .listData(classes)
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(pagedResponse);
+    public ResponseEntity<List<Classes>> getClassByTeacherId(@PathVariable String teacherId) {
+        List<Classes> classes = classTeacherService.getClassByTeacherId(teacherId);
+        return ResponseEntity.status(HttpStatus.OK).body(classes);
     }
 
     @GetMapping("/class/{classId}")
