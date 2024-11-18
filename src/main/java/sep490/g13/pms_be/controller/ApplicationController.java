@@ -11,7 +11,7 @@ import sep490.g13.pms_be.service.entity.ChildrenService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/application")
+@RequestMapping("/pms/application")
 public class ApplicationController {
 
     @Autowired

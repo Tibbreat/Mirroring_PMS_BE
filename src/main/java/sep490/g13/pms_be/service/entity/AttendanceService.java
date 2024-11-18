@@ -35,16 +35,21 @@ public class AttendanceService {
     public void updateAttendanceStatus(Log log) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate providedDate = LocalDate.parse(log.getAttendanceDate(), formatter);
-        for (Log.ChildAttendance child : log.getChildren()) {
-            AttendanceStatusEnums attendanceStatus = AttendanceStatusEnums.valueOf(child.getStatus().toUpperCase());
-            attendanceRepository.updateAttendanceStatus(
-                    child.getChildrenId(),
-                    attendanceStatus,
-                    providedDate,
-                    log.getClassId(),
-                    child.getNote());
+        if (providedDate.equals(LocalDate.now())) {
+            for (Log.ChildAttendance child : log.getChildren()) {
+                AttendanceStatusEnums attendanceStatus = AttendanceStatusEnums.valueOf(child.getStatus().toUpperCase());
+                attendanceRepository.updateAttendanceStatus(
+                        child.getChildrenId(),
+                        attendanceStatus,
+                        providedDate,
+                        log.getClassId(),
+                        child.getNote());
+            }
+        } else {
+            throw new IllegalArgumentException("Chỉ có thể cập nhật điểm danh cho ngày hôm nay");
         }
     }
+
     @Transactional
     public void updateAttendanceTime(String id, String type) {
         AttendanceLog attendanceLog = attendanceRepo.findById(id)
