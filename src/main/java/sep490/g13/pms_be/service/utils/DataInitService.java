@@ -55,8 +55,6 @@ public class DataInitService {
         routes.add(allRoutes.get(0));
         routes.add(allRoutes.get(1));
         routes.add(allRoutes.get(2));
-        routes.add(allRoutes.get(3));
-        routes.add(allRoutes.get(4));
 
         Random random = new Random();
 
@@ -65,7 +63,7 @@ public class DataInitService {
             List<Children> students = childrenRepo.findChildrenByClassId(c.getId());
 
             // Randomly select 40-70% of students
-            List<Children> selectedStudents = selectStudents(students, 40, 70);
+            List<Children> selectedStudents = selectStudents(students, 50, 70);
 
             for (Children s : selectedStudents) {
                 // Randomly assign a route to the student
