@@ -33,19 +33,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateTokenWithUserEmail(String email) {
-        Date currentDate = new Date();
-        Date expirationDate = new Date(currentDate.getTime() + jwtExpirationDate);
-
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(currentDate)
-                .setExpiration(expirationDate)
-                .signWith(key())
-                .compact();
-    }
-
-
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }

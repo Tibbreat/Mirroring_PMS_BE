@@ -2,7 +2,6 @@ package sep490.g13.pms_be.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import sep490.g13.pms_be.entities.Classes;
 import sep490.g13.pms_be.model.request.classes.AddClassRequest;
 import sep490.g13.pms_be.model.response.classes.ClassListResponse;
-import sep490.g13.pms_be.model.response.base.PagedResponseModel;
 import sep490.g13.pms_be.model.response.base.ResponseModel;
 import sep490.g13.pms_be.model.response.classes.ClassListResponseWithNumberChildren;
 import sep490.g13.pms_be.model.response.classes.ClassOption;

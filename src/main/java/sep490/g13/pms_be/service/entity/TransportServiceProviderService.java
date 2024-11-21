@@ -27,12 +27,16 @@ public class TransportServiceProviderService {
 
     @Autowired
     private VehicleRepo vehicleRepo;
+
     @Autowired
     private ChildrenRepo childrenRepo;
+
     @Autowired
     private RouteRepo routeRepo;
+
     @Autowired
     private ChildrenClassRepo childrenClassRepo;
+
     @Autowired
     private ClassRepo classRepo;
 
