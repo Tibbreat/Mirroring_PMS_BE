@@ -27,12 +27,11 @@ public class ScheduleService {
         this.classRepo = classRepo;
         this.childrenRepository = childrenRepository;
     }
-    @Scheduled(cron = "0 1 0 * * ?")
+    @Scheduled(cron = "0 1 0 * * ?", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void createDailyAttendanceLogs() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         List<String> classIds = classRepo.findClassIdsByAcademicYear("2024-2025");
-
         for (String classId : classIds) {
             createBaseLog(classId, today);
         }

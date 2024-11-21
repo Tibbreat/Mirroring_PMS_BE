@@ -114,7 +114,9 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
     void updateCountStudentRegisteredOnBoarding(@Param("classId") String classId, @Param("count") int count);
 
 
-    @Query("SELECT c.id FROM Classes c WHERE c.academicYear = :academicYear")
+    @Query("SELECT c.id FROM Classes c " +
+            "WHERE c.academicYear = :academicYear " +
+            "AND c.status = sep490.g13.pms_be.utils.enums.ClassStatusEnums.IN_PROGRESS")
     List<String> findClassIdsByAcademicYear(@Param("academicYear") String academicYear);
 
     @Query("SELECT COUNT(c.id) FROM Classes c " +

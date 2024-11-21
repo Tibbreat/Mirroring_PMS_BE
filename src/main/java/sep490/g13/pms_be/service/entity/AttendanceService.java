@@ -7,6 +7,7 @@ import sep490.g13.pms_be.entities.AttendanceLog;
 import sep490.g13.pms_be.model.request.attendance.Log;
 import sep490.g13.pms_be.model.response.attendance.ChildrenAttendanceLog;
 import sep490.g13.pms_be.repository.AttendanceRepo;
+import sep490.g13.pms_be.service.utils.ScheduleService;
 import sep490.g13.pms_be.utils.enums.AttendanceStatusEnums;
 
 import java.time.LocalDate;
@@ -22,7 +23,11 @@ public class AttendanceService {
     @Autowired
     private AttendanceRepo attendanceRepo;
 
+    @Autowired
+    private ScheduleService scheduleService;
+
     public List<ChildrenAttendanceLog> getBaseLog(String classId, String today) {
+        scheduleService.createBaseLog(classId, today);
         return attendanceRepository.getChildrenAttendanceLog(classId, LocalDate.parse(today, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 

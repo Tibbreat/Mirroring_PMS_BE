@@ -92,7 +92,7 @@ public class FoodRequestController {
     @PutMapping("/accept/{requestId}")
     public ResponseEntity<?> changeStatus(@PathVariable String requestId,
                                           @RequestParam String status,
-                                          @RequestBody FoodRequestDataModel data) {
+                                          @RequestBody(required = false) FoodRequestDataModel data) {
         if (status.equals("APPROVED")) {
             School school = schoolRepo.findFirstByOrderByIdAsc();
             FoodServiceProvider provider = foodServiceProviderRepo.findById(data.getProviderId()).orElseThrow(() -> new DataNotFoundException("Provider not found"));
