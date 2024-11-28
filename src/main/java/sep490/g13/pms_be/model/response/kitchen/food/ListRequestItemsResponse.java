@@ -1,4 +1,4 @@
-package sep490.g13.pms_be.model.response.food;
+package sep490.g13.pms_be.model.response.kitchen.food;
 
 
 import lombok.*;

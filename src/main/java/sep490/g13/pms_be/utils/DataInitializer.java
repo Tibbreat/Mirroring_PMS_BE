@@ -69,7 +69,7 @@ public class DataInitializer {
 
     private void initializeSchool() throws ParseException {
         if (schoolRepo.count() == 0) {
-            School school = School.builder().schoolName("Trường mầm non Thạch Hòa").schoolAddress("Xã Thạch Hoà, Huyện Thạch Thất, Hà Nội").phoneContact("0978 056 529").emailContact("mnthachhoa@edu.vn").build();
+            School school = School.builder().schoolName("Trường mầm non Đông Phương Yên").schoolAddress("Đồi 3, Đông Phương Yên, Chương Mỹ, Huyện Chương Mỹ, Hà Nội").phoneContact("0978 056 529").emailContact("mnthachhoa@edu.vn").build();
             schoolRepo.save(school);
             if (userRepo.count() == 0) {
                 User admin = userRepo.save(User.builder().role(RoleEnums.ADMIN).isActive(true).email("admin.pms@gmail.com").fullName("Nguyễn Trung Kiên").phone("0943494158").username("admin").password(passwordEncoder.encode("admin")).build());

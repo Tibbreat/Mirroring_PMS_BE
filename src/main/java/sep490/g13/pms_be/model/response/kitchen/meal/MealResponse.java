@@ -1,4 +1,4 @@
-package sep490.g13.pms_be.model.response.meal;
+package sep490.g13.pms_be.model.response.kitchen.meal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

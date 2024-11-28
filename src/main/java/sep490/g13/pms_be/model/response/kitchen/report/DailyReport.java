@@ -1,4 +1,4 @@
-package sep490.g13.pms_be.model.response.meal;
+package sep490.g13.pms_be.model.response.kitchen.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DishResponse {
-    private String id;
-    private String dishName;
-    private String dishType;
+public class DailyReport {
+    private int ageRange1;
+    private int ageRange2;
+    private int ageRange3;
 }

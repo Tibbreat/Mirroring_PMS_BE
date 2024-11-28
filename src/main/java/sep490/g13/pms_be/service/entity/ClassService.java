@@ -10,6 +10,7 @@ import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.exception.other.PermissionNotAcceptException;
 import sep490.g13.pms_be.model.request.classes.AddClassRequest;
 import sep490.g13.pms_be.model.response.classes.*;
+import sep490.g13.pms_be.model.response.kitchen.report.DailyReport;
 import sep490.g13.pms_be.model.response.user.TeacherOfClassResponse;
 import sep490.g13.pms_be.repository.ClassRepo;
 import sep490.g13.pms_be.repository.SchoolYearInformationRepo;
@@ -157,5 +158,7 @@ public class ClassService {
     public List<ListClassWithStudyStatus> findAllByChildrenId(String childrenId) {
         return classRepo.findAllByChildrenId(childrenId);
     }
-
+    public DailyReport report(String academicYear){
+        return classRepo.countChildrenByAgeRange(academicYear);
+    }
 }

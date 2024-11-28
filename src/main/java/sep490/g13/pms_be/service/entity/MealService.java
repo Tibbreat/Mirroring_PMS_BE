@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import sep490.g13.pms_be.entities.Dish;
 import sep490.g13.pms_be.entities.Meal;
 import sep490.g13.pms_be.model.request.meal.AddMealRequest;
-import sep490.g13.pms_be.model.response.meal.DishResponse;
-import sep490.g13.pms_be.model.response.meal.MealResponse;
+import sep490.g13.pms_be.model.response.kitchen.meal.DishResponse;
+import sep490.g13.pms_be.model.response.kitchen.meal.MealResponse;
+import sep490.g13.pms_be.model.response.kitchen.report.DailyReport;
 import sep490.g13.pms_be.repository.DishRepo;
 import sep490.g13.pms_be.repository.MealRepo;
 
@@ -74,6 +75,7 @@ public class MealService {
                 .map(this::convertToMealResponse)
                 .collect(Collectors.toList());
     }
+
     private MealResponse convertToMealResponse(Meal meal) {
         List<DishResponse> dishResponses = meal.getDishes().stream()
                 .map(dish -> new DishResponse(dish.getId(), dish.getDishName(), dish.getDishType()))

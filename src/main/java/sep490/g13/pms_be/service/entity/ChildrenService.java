@@ -129,8 +129,8 @@ public class ChildrenService {
         return childrenRepo.findChildrenByFilter(academicYear, childName, PageRequest.of(page, size));
     }
 
-    public Page<ChildrenListResponse> findChildrenByClass(String classId, int page, int size) {
-        return childrenRepo.findChildrenByClass(classId, PageRequest.of(page, size));
+    public List<ChildrenListByClass> findChildrenByClass(String classId) {
+        return childrenRepo.findChildrenByClassId_v2(classId);
     }
 
     public ChildrenDetailResponse getChildrenDetail(String childrenId) {

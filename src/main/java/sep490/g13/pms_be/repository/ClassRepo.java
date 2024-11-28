@@ -10,6 +10,7 @@ import sep490.g13.pms_be.model.response.classes.ClassListResponse;
 import sep490.g13.pms_be.model.response.classes.ClassListResponseWithNumberChildren;
 import sep490.g13.pms_be.model.response.classes.ListAvailableClassOption;
 import sep490.g13.pms_be.model.response.classes.ListClassWithStudyStatus;
+import sep490.g13.pms_be.model.response.kitchen.report.DailyReport;
 import sep490.g13.pms_be.model.response.user.TeacherOfClassResponse;
 
 import java.util.List;
@@ -125,4 +126,15 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
             "AND c.status IN (sep490.g13.pms_be.utils.enums.ClassStatusEnums.IN_PROGRESS, " +
             "                 sep490.g13.pms_be.utils.enums.ClassStatusEnums.NOT_STARTED)")
     int countClassesByAcademicYearAndAgeRange(String academicYear, String ageRange);
+
+    @Query("SELECT new sep490.g13.pms_be.model.response.kitchen.report.DailyReport(" +
+            "CAST(SUM(CASE WHEN c.ageRange = '3-4' THEN c.countChildrenRegisteredOnBoarding ELSE 0 END) AS int), " +
+            "CAST(SUM(CASE WHEN c.ageRange = '4-5' THEN c.countChildrenRegisteredOnBoarding ELSE 0 END) AS int), " +
+            "CAST(SUM(CASE WHEN c.ageRange = '5-6' THEN c.countChildrenRegisteredOnBoarding ELSE 0 END) AS int)) " +
+            "FROM Classes c " +
+            "WHERE c.academicYear = :academicYear")
+    DailyReport countChildrenByAgeRange(@Param("academicYear") String academicYear);
+
+
+
 }

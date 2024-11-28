@@ -52,26 +52,21 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
     @Query("UPDATE Children ch SET ch.isRegisteredForBoarding = :status WHERE ch.id = :childrenId")
     void updateBoardingServiceStatus(@Param("childrenId") String childrenId, @Param("status") Boolean status);
 
-    @Query("SELECT new sep490.g13.pms_be.model.response.children.ChildrenListResponse(" +
-            "ch.id, ch.childName, ch.childBirthDate, sc.id,sc.classes.className, ch.imageUrl, ch.gender, " +
-            "(SELECT rlFather.parentId.fullName FROM Relationship rlFather WHERE rlFather.childrenId.id = ch.id AND rlFather.relationship = 'Father'), " +
-            "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')," +
-            "ch.isRegisteredForBoarding, ch.isRegisteredForTransport) " +
-            "FROM Children ch " +
-            "LEFT JOIN ch.childrenClasses sc " +
-            "WHERE  sc.classes.id = :classId " +
-            "AND sc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING " +
-            "ORDER BY ch.childName")
-    Page<ChildrenListResponse> findChildrenByClass(
-            @Param("classId") String classId,
-            Pageable pageable);
-
     @Query("SELECT ch FROM Children ch " +
             "LEFT JOIN ch.childrenClasses sc " +
             "WHERE  sc.classes.id = :classId " +
             "AND sc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING " +
             "ORDER BY ch.childName")
     List<Children> findChildrenByClassId(String classId);
+
+    @Query("SELECT new sep490.g13.pms_be.model.response.children.ChildrenListByClass(" +
+            "c.id, c.imageUrl, c.childName, c.childBirthDate, c.gender, " +
+            "c.isRegisteredForBoarding, c.isRegisteredForTransport) " +
+            "FROM Children c " +
+            "LEFT JOIN c.childrenClasses cc ON c.id = cc.children.id " +
+            "WHERE cc.classes.id = :classId " +
+            "AND cc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING")
+    List<ChildrenListByClass> findChildrenByClassId_v2(@Param("classId") String classId);
 
     @Query("SELECT c FROM Children c " +
             "LEFT JOIN c.childrenClasses cc ON c.id = cc.children.id " +
@@ -104,7 +99,7 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
             "(SELECT rlMother.parentId.fullName FROM Relationship rlMother WHERE rlMother.childrenId.id = ch.id AND rlMother.relationship = 'Mother')) " +
             "FROM Children ch " +
             "LEFT JOIN ch.childrenClasses sc " +
-            "WHERE sc.classes.id = :classId " +
+            "WHERE sc.classes.id = :classId AND sc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING  " +
             "ORDER BY ch.childName")
     List<ChildrenDataSheetRow> getChildrenDataSheet(String classId);
 

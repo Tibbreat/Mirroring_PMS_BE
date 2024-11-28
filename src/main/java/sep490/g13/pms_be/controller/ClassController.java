@@ -13,6 +13,7 @@ import sep490.g13.pms_be.model.response.base.ResponseModel;
 import sep490.g13.pms_be.model.response.classes.ClassListResponseWithNumberChildren;
 import sep490.g13.pms_be.model.response.classes.ClassOption;
 import sep490.g13.pms_be.model.response.classes.ListClassWithStudyStatus;
+import sep490.g13.pms_be.model.response.kitchen.report.DailyReport;
 import sep490.g13.pms_be.model.response.user.TeacherOfClassResponse;
 import sep490.g13.pms_be.service.entity.*;
 import sep490.g13.pms_be.utils.ValidationUtils;
@@ -93,7 +94,6 @@ public class ClassController {
                 .build());
     }
 
-
     @GetMapping("/available/{academicYear}")
     public ResponseEntity<?> getAvailableClassOption(@PathVariable String academicYear) {
         return ResponseEntity.ok(classService.getAvailableClassOption(academicYear));
@@ -133,5 +133,10 @@ public class ClassController {
     @GetMapping("/transfer-options/academic-year/{academicYear}/children/{childrenId}")
     public ResponseEntity<?> getTransferOptions(@PathVariable String academicYear, @PathVariable String childrenId) {
         return ResponseEntity.ok(classService.getAvailableClassOptionToTransfer(academicYear, childrenId));
+    }
+
+    @GetMapping("/kitchen/report/{academicYear}")
+    public ResponseEntity<DailyReport> getReport(@PathVariable String academicYear) {
+        return ResponseEntity.ok(classService.report(academicYear));
     }
 }

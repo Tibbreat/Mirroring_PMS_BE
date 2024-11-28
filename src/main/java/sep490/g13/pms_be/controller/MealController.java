@@ -1,12 +1,15 @@
 package sep490.g13.pms_be.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sep490.g13.pms_be.model.request.meal.AddMealRequest;
 import sep490.g13.pms_be.model.response.base.ResponseModel;
-import sep490.g13.pms_be.model.response.meal.MealResponse;
+import sep490.g13.pms_be.model.response.kitchen.meal.MealResponse;
 import sep490.g13.pms_be.service.entity.MealService;
+import sep490.g13.pms_be.utils.ValidationUtils;
 
 import java.text.ParseException;
 import java.time.YearMonth;
@@ -20,16 +23,26 @@ public class MealController {
     @Autowired
     private MealService mealService;
 
-
     @PostMapping("/create")
-    public ResponseEntity<ResponseModel<Void>> createMeal(@RequestBody AddMealRequest request) {
-        mealService.save(request);
-        return ResponseEntity.ok(
-                ResponseModel.<Void>builder()
-                        .message("Meal created successfully")
-                        .data(null)
-                        .build()
-        );
+    public ResponseEntity<ResponseModel<?>> createMeal(@RequestBody @Valid AddMealRequest request,
+                                                          BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String validationErrors = ValidationUtils.getValidationErrors(bindingResult);
+            return ResponseEntity.badRequest().body(
+                    ResponseModel.builder()
+                            .message("Thông tin lớp học không hợp lệ")
+                            .data(validationErrors)
+                            .build()
+            );
+        }else{
+            mealService.save(request);
+            return ResponseEntity.ok(
+                    ResponseModel.<Void>builder()
+                            .message("Meal created successfully")
+                            .data(null)
+                            .build()
+            );
+        }
     }
 
     @GetMapping("/date/{date}")

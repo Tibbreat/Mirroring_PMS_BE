@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import sep490.g13.pms_be.entities.FoodRequest;
-import sep490.g13.pms_be.model.response.food.ListFoodResponse;
+import sep490.g13.pms_be.model.response.kitchen.food.ListFoodResponse;
 
 @Repository
 public interface FoodRequestRepo extends JpaRepository<FoodRequest, String> {
 
-    @Query("SELECT new sep490.g13.pms_be.model.response.food.ListFoodResponse(" +
+    @Query("SELECT new sep490.g13.pms_be.model.response.kitchen.food.ListFoodResponse(" +
             "f.id, " +
             "f.dayNeeded, " +
             "u.username, " +

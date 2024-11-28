@@ -41,6 +41,7 @@ public class ChildrenController {
                         .build()
         );
     }
+
     @GetMapping
     public ResponseEntity<PagedResponseModel<ChildrenListResponse>> getChildren(
             @RequestParam(value = "academicYear", required = false) String academicYear,
@@ -52,12 +53,8 @@ public class ChildrenController {
     }
 
     @GetMapping("/class/{classId}")
-    public ResponseEntity<PagedResponseModel<ChildrenListResponse>> getChildrenByClass(
-            @PathVariable String classId,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
-
-        Page<ChildrenListResponse> results = childrenService.findChildrenByClass(classId, page - 1, DEFAULT_PAGE_SIZE);
-        return buildPagedResponse(results, page);
+    public ResponseEntity<List<ChildrenListByClass>> getChildrenByClass(@PathVariable String classId) {
+        return ResponseEntity.ok(childrenService.findChildrenByClass(classId));
     }
 
     @PostMapping("/new-children")
