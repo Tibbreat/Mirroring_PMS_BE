@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateSchoolRequest {
-    private String schoolId;
     private String schoolName;
     private String phoneContact;
     private String emailContact;

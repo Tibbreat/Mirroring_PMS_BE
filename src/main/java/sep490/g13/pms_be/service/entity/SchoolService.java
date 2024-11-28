@@ -1,15 +1,12 @@
 package sep490.g13.pms_be.service.entity;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sep490.g13.pms_be.entities.School;
 import sep490.g13.pms_be.entities.SchoolYearInformation;
 import sep490.g13.pms_be.entities.User;
-import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.model.request.school.AcademicInformationRequest;
-import sep490.g13.pms_be.model.request.school.AddSchoolRequest;
 import sep490.g13.pms_be.model.request.school.UpdateSchoolRequest;
 import sep490.g13.pms_be.repository.AdmissionFileRepo;
 import sep490.g13.pms_be.repository.SchoolRepo;
@@ -29,13 +26,6 @@ public class SchoolService {
     @Autowired
     private AdmissionFileRepo admissionFileRepo;
 
-    public School saveSchool(AddSchoolRequest addSchoolRequest) {
-        School school = new School();
-        BeanUtils.copyProperties(addSchoolRequest, school);
-        User principal = userRepo.findById(addSchoolRequest.getPrincipalId()).orElseThrow(() -> new RuntimeException("User not found"));
-        school.setPrincipal(principal);
-        return schoolRepo.save(school);
-    }
 
     public School getSchools() {
         return schoolRepo.findFirstByOrderByIdAsc();
@@ -46,7 +36,7 @@ public class SchoolService {
     }
 
     public School updateSchoolInformation(UpdateSchoolRequest request) {
-        School school = schoolRepo.findById(request.getSchoolId()).orElseThrow(() -> new DataNotFoundException("School not found"));
+        School school = getSchools();
 
         User principal = school.getPrincipal();
         principal.setFullName(request.getPrincipalName());
