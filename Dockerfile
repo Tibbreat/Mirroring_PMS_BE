@@ -12,6 +12,10 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:22
 WORKDIR /app
 
+# Cài đặt múi giờ cho container
+ENV TZ=Asia/Ho_Chi_Minh
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Copy file JAR đã build từ stage 1
 COPY --from=build /app/target/PMS_BE-0.0.1-SNAPSHOT.jar /app/app.jar
 
