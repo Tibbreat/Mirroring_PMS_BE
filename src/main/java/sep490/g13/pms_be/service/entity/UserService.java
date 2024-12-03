@@ -10,13 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sep490.g13.pms_be.entities.Relationship;
 import sep490.g13.pms_be.entities.User;
 import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.model.request.user.AddUserRequest;
+import sep490.g13.pms_be.model.request.user.UpdateParentRequest;
 import sep490.g13.pms_be.model.request.user.UpdateUserNameAndPasswordRequest;
 import sep490.g13.pms_be.model.request.user.UpdateUserRequest;
 import sep490.g13.pms_be.model.response.user.GetParentOptionResponse;
 import sep490.g13.pms_be.model.response.user.GetUsersOptionResponse;
+import sep490.g13.pms_be.repository.RelationshipRepo;
 import sep490.g13.pms_be.repository.SchoolRepo;
 import sep490.g13.pms_be.repository.UserRepo;
 import sep490.g13.pms_be.service.utils.CloudinaryService;
@@ -37,6 +40,8 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private RelationshipRepo relationshipRepo;
 
     public User addUser(AddUserRequest request, MultipartFile image) {
 
@@ -160,5 +165,17 @@ public class UserService {
 
     public GetParentOptionResponse getParentByChildrenId(String childrenId) {
         return userRepo.findParentByChildrenId(childrenId);
+    }
+
+    @Transactional
+    public void updateParentInfo(UpdateParentRequest request){
+        User mother = userRepo.findByRelationship(request.getChildrenId(), "Mother");
+        User father = userRepo.findByRelationship(request.getChildrenId(), "Father");
+        mother.setFullName(request.getMother().getFullName());
+        mother.setPhone(request.getMother().getPhone());
+        father.setFullName(request.getFather().getFullName());
+        father.setPhone(request.getFather().getPhone());
+        userRepo.save(mother);
+        userRepo.save(father);
     }
 }

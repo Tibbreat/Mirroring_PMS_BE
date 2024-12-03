@@ -28,4 +28,6 @@ public class ChildrenDetailResponse {
     private String motherId;
     private String motherName;
     private String motherPhone;
+
+    private String id;
 }

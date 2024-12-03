@@ -24,7 +24,6 @@ public class ApplicationController {
                                                                       @RequestParam(required = false) String routeId) {
         return applicationFormService.getAllApplicationFormByAcademicYear(academicYear, routeId);
     }
-
     @GetMapping("/get-all-route-report/{academicYear}")
     public List<RouteReportCard> getAllRouteReport(@PathVariable String academicYear) {
         return applicationFormService.getAllRouteReport(academicYear);

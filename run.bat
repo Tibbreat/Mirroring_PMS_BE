@@ -1,5 +1,3 @@
-
-
 # Build the Docker image
 echo "Building Docker image $REPO_NAME:$TAG ..."
 docker build -t tungb12ok/pms .

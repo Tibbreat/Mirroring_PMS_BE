@@ -3,6 +3,8 @@ package sep490.g13.pms_be.service.entity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sep490.g13.pms_be.entities.Children;
 import sep490.g13.pms_be.entities.Classes;
 import sep490.g13.pms_be.entities.SchoolYearInformation;
 import sep490.g13.pms_be.entities.User;
@@ -12,11 +14,10 @@ import sep490.g13.pms_be.model.request.classes.AddClassRequest;
 import sep490.g13.pms_be.model.response.classes.*;
 import sep490.g13.pms_be.model.response.kitchen.report.DailyReport;
 import sep490.g13.pms_be.model.response.user.TeacherOfClassResponse;
-import sep490.g13.pms_be.repository.ClassRepo;
-import sep490.g13.pms_be.repository.SchoolYearInformationRepo;
-import sep490.g13.pms_be.repository.UserRepo;
+import sep490.g13.pms_be.repository.*;
 import sep490.g13.pms_be.utils.enums.ClassStatusEnums;
 import sep490.g13.pms_be.utils.enums.RoleEnums;
+import sep490.g13.pms_be.utils.enums.StudyStatusEnums;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,8 +31,15 @@ public class ClassService {
 
     @Autowired
     private ClassTeacherService classTeacherService;
+
     @Autowired
     private SchoolYearInformationRepo schoolYearInformationRepo;
+
+    @Autowired
+    private ChildrenRepo childrenRepo;
+
+    @Autowired
+    private ChildrenClassRepo childrenClassRepo;
 
     public Classes createNewClass(AddClassRequest classRequest) {
         Classes newClass = new Classes();
@@ -160,5 +168,18 @@ public class ClassService {
     }
     public DailyReport report(String academicYear){
         return classRepo.countChildrenByAgeRange(academicYear);
+    }
+
+    @Transactional
+    public void changeClassStatusToComplete(String classId) {
+        Classes classes = classRepo.findById(classId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy lớp học với id: " + classId));
+        classes.setStatus(ClassStatusEnums.COMPLETED);
+        classRepo.save(classes);
+
+        //find all children are studying of this class
+        List<Children> listChildren = childrenRepo.findChildrenByClassId(classId);
+        listChildren.stream().map(Children::getId).forEach(childrenId -> {
+            childrenClassRepo.updateStatusByChildrenIdAndClassId(childrenId, classId, StudyStatusEnums.GRADUATED);
+        });
     }
 }

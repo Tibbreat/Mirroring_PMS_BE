@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sep490.g13.pms_be.entities.Vehicle;
@@ -37,15 +38,12 @@ public class VehicleController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Vehicle> add(
-            @RequestPart("request") AddVehicleRequest request,  // JSON part
-            @RequestPart("images") List<MultipartFile> images  // File part (multiple files)
-    ) {
+            @RequestPart("request") AddVehicleRequest request,
+            @RequestPart("images") List<MultipartFile> images  ) {
         try {
-            // Process the request object and images
             Vehicle addedVehicle = vehicleService.add(request, images);
-
-            // Assuming your service method handles saving both the vehicle info and the image(s)
             return ResponseEntity.ok(addedVehicle);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,6 +53,7 @@ public class VehicleController {
 
 
     @PutMapping("/update-status/{vehicleId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateStatus(@PathVariable String vehicleId) {
         vehicleService.updateStatus(vehicleId);
         return ResponseEntity.ok().build();

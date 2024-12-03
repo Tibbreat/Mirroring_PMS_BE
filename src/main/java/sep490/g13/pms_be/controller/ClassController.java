@@ -139,4 +139,12 @@ public class ClassController {
     public ResponseEntity<DailyReport> getReport(@PathVariable String academicYear) {
         return ResponseEntity.ok(classService.report(academicYear));
     }
+
+    @PutMapping("/change-class-status/{classId}")
+    public ResponseEntity<ResponseModel<?>> changeClassDescription(@PathVariable String classId) {
+        classService.changeClassStatusToComplete(classId);
+        return ResponseEntity.ok(ResponseModel.builder()
+                .message("Thay đổi trạng thái lớp học thành công")
+                .build());
+    }
 }

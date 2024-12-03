@@ -21,6 +21,11 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, String> {
     User findByUsername(String username);
 
+    @Query("SELECT r.parentId FROM Relationship r " +
+            "WHERE r.childrenId.id = :childrenId " +
+            "AND r.relationship = :relationship")
+    User findByRelationship(String childrenId, String relationship);
+
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.isActive = true")
     List<User> findByRole(RoleEnums role);
 

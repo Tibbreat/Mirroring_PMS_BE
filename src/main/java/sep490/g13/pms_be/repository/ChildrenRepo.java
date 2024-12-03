@@ -37,7 +37,8 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
             "ch.childName, ch.childBirthDate, ch.childAddress, ch.isRegisteredForTransport, ch.isRegisteredForBoarding, ch.imageUrl, ch.birthAddress, " +
             "ch.nationality, ch.religion, ch.gender, " +
             "father.parentId.id, father.parentId.fullName, father.parentId.phone, " +
-            "mother.parentId.id, mother.parentId.fullName, mother.parentId.phone) " +
+            "mother.parentId.id, mother.parentId.fullName, mother.parentId.phone," +
+            "ch.id)" +
             "FROM Children ch " +
             "LEFT JOIN Relationship father ON father.childrenId.id = ch.id AND father.relationship = 'Father' " +
             "LEFT JOIN Relationship mother ON mother.childrenId.id = ch.id AND mother.relationship = 'Mother' " +
