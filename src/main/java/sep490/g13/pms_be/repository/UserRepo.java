@@ -20,6 +20,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepo extends JpaRepository<User, String> {
     User findByUsername(String username);
+    User findAccountByEmail(String email);
+
+    @Query("SELECT u.username FROM User u WHERE u.email = :email")
+    String getAccountByEmail(String email);
 
     @Query("SELECT r.parentId FROM Relationship r " +
             "WHERE r.childrenId.id = :childrenId " +

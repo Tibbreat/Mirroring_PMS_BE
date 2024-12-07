@@ -546,7 +546,8 @@ public class ChildrenService {
         }
 
         // Save each child if all checks pass
-        data.forEach(children -> addChildren(children, null));
+        data.forEach(children ->
+                addChildren(children, null));
     }
 
     public void uploadImage(String childrenId, MultipartFile image) {
