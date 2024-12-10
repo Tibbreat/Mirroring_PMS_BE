@@ -54,7 +54,7 @@ public class DataInitService {
         // Add specific routes for assignment
         routes.add(allRoutes.get(0));
         routes.add(allRoutes.get(1));
-        routes.add(allRoutes.get(2));
+
 
         Random random = new Random();
 

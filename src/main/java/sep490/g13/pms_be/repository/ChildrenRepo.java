@@ -161,4 +161,7 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
 
     @Query("SELECT c.id FROM Children c WHERE c.vehicle.id IN :vehicleIds")
     List<String> findAllChildrenByVehicleId(List<String> vehicleIds);
+
+    @Query("SELECT c.id FROM Children c WHERE c.vehicle.id IN :vehicleId")
+    List<String> getChildrenIdsByVehicleId(String vehicleId);
 }

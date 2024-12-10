@@ -34,7 +34,11 @@ public class VehicleService {
     private RouteRepo routeRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private ChildrenRepo childrenRepo;
 
+    @Autowired
+    private ChildrenService childrenService;
 
     public Page<Vehicle> getAllVehicle(String providerId, int page, int size) {
         return vehicleRepo.findAllByTransportId(providerId, PageRequest.of(page, size));
@@ -125,11 +129,15 @@ public class VehicleService {
     public void unsubscribeRoute(String vehicleId) {
         Vehicle vehicle = vehicleRepo.findById(vehicleId)
                 .orElseThrow(() -> new DataNotFoundException("Vehicle not found"));
-
         if (vehicle.getRoute() == null) {
             throw new IllegalArgumentException("Vehicle is not subscribed to any route.");
         }
 
+        //Hủy trạng thái đăng ký đưa đón của trẻ.
+        List<String> childrenIds = childrenRepo.getChildrenIdsByVehicleId(vehicleId);
+        for(String childrenId : childrenIds){
+            childrenService.updateServiceStatus(childrenId, "transport", null, null);
+        }
         vehicle.setRoute(null);
         vehicle.setManager(null);
         vehicleRepo.save(vehicle);
