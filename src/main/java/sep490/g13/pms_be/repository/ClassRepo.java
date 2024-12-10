@@ -90,7 +90,7 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
 
 
     @Query("SELECT new sep490.g13.pms_be.model.response.classes.ListClassWithStudyStatus(" +
-            "c.id, c.academicYear, c.className, c.status, cc.status) " +
+            "c.id, c.academicYear, c.className, c.status, cc.status, cc.countAbsent) " +
             "FROM Classes c " +
             "LEFT JOIN c.childrenClasses cc " +
             "WHERE cc.children.id = :childrenId " +

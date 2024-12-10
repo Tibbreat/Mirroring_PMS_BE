@@ -18,4 +18,5 @@ public class ListClassWithStudyStatus {
 
     private ClassStatusEnums classStatus;
     private StudyStatusEnums studyStatus;
+    private int countAbsent;
 }
