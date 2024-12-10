@@ -151,6 +151,14 @@ public class ChildrenService {
 
         // Update children class
         childrenClassRepo.updateStatusByChildrenIdAndClassId(childrenId, oldClassId, StudyStatusEnums.MOVED_OUT);
+        ChildrenClass ccOld = childrenClassRepo.findByChildrenIdAndClassesId(childrenId, oldClassId, StudyStatusEnums.MOVED_OUT);
+        int oldCountAbsent = ccOld.getCountAbsent();
+        ccOld.setCountAbsent(0);
+        childrenClassRepo.save(ccOld);
+
+        ChildrenClass ccNew = childrenClassRepo.findByChildrenIdAndClassesId(childrenId, newClassId, StudyStatusEnums.STUDYING);
+        ccNew.setCountAbsent(oldCountAbsent);
+        childrenClassRepo.save(ccNew);
 
         //Add new class for children
         childrenClassRepo.save(ChildrenClass.builder()

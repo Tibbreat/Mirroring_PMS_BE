@@ -26,10 +26,7 @@ public interface AttendanceRepo extends JpaRepository<AttendanceLog, String> {
             "JOIN a.children c " +
             "WHERE a.classes.id = :classId " +
             "AND a.attendanceDate = :today")
-    List<ChildrenAttendanceLog> getChildrenAttendanceLog(
-            @Param("classId") String classId,
-            @Param("today") LocalDate today
-    );
+    List<ChildrenAttendanceLog> getChildrenAttendanceLog(@Param("classId") String classId, @Param("today") LocalDate today );
 
     @Modifying
     @Query("UPDATE AttendanceLog a SET a.status = :status, a.note = :note " +
@@ -46,4 +43,10 @@ public interface AttendanceRepo extends JpaRepository<AttendanceLog, String> {
             "WHERE c.vehicle.manager.id = :managerId " +
             "AND a.attendanceDate = :today")
     List<ChildrenAttendanceLog> getChildrenAttendanceLogBaseOnVehicle(String managerId, LocalDate today);
+
+    @Query("SELECT a.children.id " +
+            "FROM AttendanceLog a " +
+            "WHERE a.attendanceDate = :today " +
+            "AND a.status = 'ABSENT'")
+    List<String> getAllChildrenAbsentInDay(LocalDate today);
 }
