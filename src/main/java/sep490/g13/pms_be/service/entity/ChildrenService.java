@@ -8,12 +8,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sep490.g13.pms_be.entities.*;
+import sep490.g13.pms_be.exception.other.DataAlreadyExistException;
 import sep490.g13.pms_be.exception.other.DataNotFoundException;
 import sep490.g13.pms_be.exception.other.OutRangeClassException;
 import sep490.g13.pms_be.model.request.admission_application.ApprovedTransportApplication;
@@ -21,6 +21,7 @@ import sep490.g13.pms_be.model.request.children.AddChildrenRequest;
 import sep490.g13.pms_be.model.response.children.*;
 import sep490.g13.pms_be.repository.*;
 import sep490.g13.pms_be.service.utils.CloudinaryService;
+import sep490.g13.pms_be.utils.Constant;
 import sep490.g13.pms_be.utils.ExcelUtils;
 import sep490.g13.pms_be.utils.StringUtils;
 import sep490.g13.pms_be.utils.enums.RoleEnums;
@@ -68,30 +69,35 @@ public class ChildrenService {
 
     @Transactional
     public Children addChildren(AddChildrenRequest request, MultipartFile image) {
+        if (checkExistChildren(request.getChildName(), request.getFather().getIdCardNumber(), request.getMother().getIdCardNumber())) {
+            throw new DataAlreadyExistException("Thông tin của " + request.getChildName() + " đã tồn tại");
+        }
+
         Children children = Children.builder().childName(request.getChildName()).childBirthDate(request.getChildBirthDate()).childAddress(request.getChildAddress()).birthAddress(request.getBirthAddress()).gender(request.getGender()).religion(request.getReligion()).nationality(request.getNationality()).isRegisteredForBoarding(Boolean.FALSE).isRegisteredForTransport(Boolean.FALSE).build();
         children.setCreatedBy(request.getCreatedBy());
 
-        if (image != null) {
-            String imageUrl = cloudinaryService.saveImage(image);
-            children.setImageUrl(imageUrl);
-        }
 
-        // Lưu đối tượng `Children` trước khi tạo `ChildrenClass`
         Children newChildren = childrenRepo.save(children);
 
-        // Set class for children
         if (request.getClassId() != null) {
             Classes aClass = classRepo.findById(request.getClassId()).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
+            if (!StringUtils.isAgeInRange(request.getChildBirthDate(), aClass.getAgeRange())) {
+                throw new IllegalArgumentException("Tuổi hiện tại của " + request.getChildName() + " hiện tại không phù hợp với độ tuổi của lớp");
+            }
+
 
             int countChildren = childrenClassRepo.countChildrenByClassId(request.getClassId());
             if (countChildren >= aClass.getTotalStudent()) {
-                throw new IllegalArgumentException("Lớp học đã đủ số lượng học sinh");
+                throw new IllegalArgumentException(Constant.CLASS_FULL_SLOT);
             }
 
-            // Lưu `ChildrenClass` sau khi `Children` đã được lưu
-            ChildrenClass cc = childrenClassRepo.save(ChildrenClass.builder().children(newChildren)  // Sử dụng `newChildren` đã được lưu
+            ChildrenClass cc = childrenClassRepo.save(ChildrenClass.builder().children(newChildren)
                     .classes(aClass).academicYear(aClass.getAcademicYear()).status(StudyStatusEnums.STUDYING).build());
             newChildren.setChildrenClasses(Set.of(cc));
+        }
+        if (image != null) {
+            String imageUrl = cloudinaryService.saveImage(image);
+            children.setImageUrl(imageUrl);
         }
 
         User fatherExist = userRepo.existByIdCardNumber(request.getFather().getIdCardNumber());
@@ -99,7 +105,7 @@ public class ChildrenService {
 
         if (fatherExist != null || motherExist != null) {
             if (fatherExist != null) {
-                relationshipRepo.save(Relationship.builder().childrenId(newChildren)  // Sử dụng `newChildren` đã được lưu
+                relationshipRepo.save(Relationship.builder().childrenId(newChildren)
                         .parentId(fatherExist).relationship("Father").build());
             }
 
@@ -111,19 +117,20 @@ public class ChildrenService {
             // For Father
             User father = userRepo.save(User.builder().username("parent." + StringUtils.generateUsername(request.getChildName()).toLowerCase()).password(passwordEncoder.encode("123456")).fullName(request.getFather().getFullName()).idCardNumber(request.getFather().getIdCardNumber()).phone(request.getFather().getPhone()).isActive(Boolean.TRUE).role(RoleEnums.PARENT).build());
 
-            relationshipRepo.save(Relationship.builder().childrenId(newChildren)  // Sử dụng `newChildren` đã được lưu
+            relationshipRepo.save(Relationship.builder().childrenId(newChildren)
                     .parentId(father).relationship("Father").build());
 
             // For Mother
             User mother = userRepo.save(User.builder().fullName(request.getMother().getFullName()).idCardNumber(request.getMother().getIdCardNumber()).phone(request.getMother().getPhone()).isActive(Boolean.TRUE).role(RoleEnums.PARENT).build());
-
-            relationshipRepo.save(Relationship.builder().childrenId(newChildren)  // Sử dụng `newChildren` đã được lưu
+            relationshipRepo.save(Relationship.builder().childrenId(newChildren)
                     .parentId(mother).relationship("Mother").build());
         }
-
         return newChildren;
     }
 
+    public boolean checkExistChildren(String childrenName, String fatherIdNumber, String motherIdNumber) {
+        return childrenRepo.childrenAlreadyExist(childrenName, fatherIdNumber, motherIdNumber);
+    }
 
     public Page<ChildrenListResponse> findChildrenByFilter(String academicYear, String childName, int page, int size) {
         return childrenRepo.findChildrenByFilter(academicYear, childName, PageRequest.of(page, size));
@@ -146,7 +153,7 @@ public class ChildrenService {
         // Check if the new class has enough slots
         int countChildren = childrenClassRepo.countChildrenByClassId(newClassId);
         if (countChildren >= newClass.getTotalStudent()) {
-            throw new IllegalArgumentException("Lớp học đã đủ số lượng học sinh");
+            throw new IllegalArgumentException(Constant.CLASS_FULL_SLOT);
         }
 
         // Update children class
@@ -212,19 +219,15 @@ public class ChildrenService {
                     StopLocation sl = stopLocationRepo.findById(stopLocation)
                             .orElseThrow(() -> new DataNotFoundException("Không tìm thấy điểm dừng"));
 
-                    // Tìm danh sách xe theo tuyến, sắp xếp theo số chỗ giảm dần
                     List<Vehicle> vehicles = vehicleRepo.findAllByRouteIdOrderByNumberOfSeatsDesc(routeId);
 
-                    // Thuật toán Best Fit: Tìm xe có số trẻ đăng ký gần với 90% số chỗ tối đa
                     Vehicle bestFitVehicle = getVehicle(vehicles);
 
-                    // Xếp xe cho trẻ
                     children.setVehicle(bestFitVehicle);
                     children.setRegisteredStopLocation(sl);
                     children.setIsRegisteredForTransport(Boolean.TRUE);
                     childrenRepo.save(children);
 
-                    // Cập nhật số trẻ đăng ký trên xe
                     int updatedCount = bestFitVehicle.getNumberChildrenRegistered() + 1;
                     vehicleRepo.updateNumberChildrenRegistered(bestFitVehicle.getId(), updatedCount);
 
@@ -271,26 +274,20 @@ public class ChildrenService {
         if (children.getIsRegisteredForTransport()) {
             throw new IllegalArgumentException("Trẻ đã đăng ký dịch vụ đưa đón");
         } else {
-            // Tìm danh sách xe theo tuyến, sắp xếp theo số chỗ giảm dần
             List<Vehicle> vehicles = vehicleRepo.findAllByRouteIdOrderByNumberOfSeatsDesc(request.getRouteId());
 
-            // Thuật toán Best Fit: Tìm xe có số trẻ đăng ký gần với 90% số chỗ tối đa
             Vehicle bestFitVehicle = getVehicle(vehicles);
 
-            // Xếp xe cho trẻ
             children.setVehicle(bestFitVehicle);
             children.setRegisteredStopLocation(sl);
             children.setIsRegisteredForTransport(Boolean.TRUE);
             childrenRepo.save(children);
 
-            // Cập nhật số trẻ đăng ký trên xe
             int updatedCount = bestFitVehicle.getNumberChildrenRegistered() + 1;
             vehicleRepo.updateNumberChildrenRegistered(bestFitVehicle.getId(), updatedCount);
 
-            // Lưu thông tin tuyến đường của trẻ
             childrenRouteRepo.save(ChildrenRoute.builder().children(children).route(route).build());
 
-            // Cập nhật số trẻ đăng ký đưa đón trong lớp
             classes.setCountChildrenRegisteredTransport(classes.getCountChildrenRegisteredTransport() + 1);
             classRepo.save(classes);
 
@@ -461,7 +458,7 @@ public class ChildrenService {
         row.createCell(8).setCellValue("male".equalsIgnoreCase(child.getGender()) ? "Nam" : "Nữ");
         row.createCell(9).setCellValue(child.getFatherName());
         row.createCell(10).setCellValue(child.getMotherName());
-        applyStyle(row, dataStyle, dateStyle, 2); // Apply date style to birth date column
+        applyStyle(row, dataStyle, dateStyle, 2);
     }
 
     // Helper method to populate data row for academic year list

@@ -59,12 +59,13 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
             "FROM Classes c " +
             "JOIN c.teachers ct " +
             "LEFT JOIN c.childrenClasses cc " +
-            "WHERE c.academicYear = :academicYear " +
+            "WHERE c.academicYear = :academicYear AND c.manager.id = :managerId " +
             "AND c.status IN (sep490.g13.pms_be.utils.enums.ClassStatusEnums.NOT_STARTED, " +
             "                 sep490.g13.pms_be.utils.enums.ClassStatusEnums.IN_PROGRESS) " +
             "GROUP BY c.id, c.className, c.ageRange, ct.teacherId.fullName, ct.teacherId.username, c.totalStudent " +
             "HAVING c.totalStudent > COUNT(cc.id)")
-    List<ListAvailableClassOption> listAvailableClassOptions(@Param("academicYear") String academicYear);
+    List<ListAvailableClassOption> listAvailableClassOptions(@Param("academicYear") String academicYear,
+                                                             @Param("managerId") String managerId);
 
     @Query("SELECT new sep490.g13.pms_be.model.response.classes.ListAvailableClassOption(" +
             "c.id, c.className, c.ageRange, " +
@@ -134,7 +135,6 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
             "FROM Classes c " +
             "WHERE c.academicYear = :academicYear")
     DailyReport countChildrenByAgeRange(@Param("academicYear") String academicYear);
-
 
 
 }

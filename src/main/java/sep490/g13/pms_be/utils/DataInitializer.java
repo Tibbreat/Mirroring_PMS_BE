@@ -69,10 +69,10 @@ public class DataInitializer {
 
     private void initializeSchool() throws ParseException {
         if (schoolRepo.count() == 0) {
-            School school = School.builder().schoolName("Trường mầm non Đông Phương Yên").schoolAddress("Đồi 3, Đông Phương Yên, Chương Mỹ, Huyện Chương Mỹ, Hà Nội").phoneContact("0978 056 529").emailContact("mnthachhoa@edu.vn").build();
+            School school = School.builder().schoolName("Trường mầm non Đông Phương Yên").schoolAddress("Đồi 3, Đông Phương Yên, Chương Mỹ, Huyện Chương Mỹ, Hà Nội").phoneContact("0978 056 529").emailContact("dongphuongyen.pms@gmail.com").build();
             schoolRepo.save(school);
             if (userRepo.count() == 0) {
-                User admin = userRepo.save(User.builder().role(RoleEnums.ADMIN).isActive(true).email("admin.pms@gmail.com").fullName("Nguyễn Trung Kiên").phone("0943494158").username("admin").password(passwordEncoder.encode("admin")).build());
+                User admin = userRepo.save(User.builder().role(RoleEnums.ADMIN).isActive(true).email("admin.pms@gmail.com").fullName("Nguyễn Thị Phi Nga").phone("0943494158").username("admin").password(passwordEncoder.encode("admin")).build());
                 school.setPrincipal(userRepo.findByUsername("admin"));
                 schoolRepo.save(school);
 
@@ -95,11 +95,8 @@ public class DataInitializer {
                 User teacher_3 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("LyLC.pms@gmail.com").phone("0987558512").username("LyLC").fullName("Lê Cẩm Ly").imageLink("https://res.cloudinary.com/dhb38seql/image/upload/v1730013010/zrkh22ud0z3bgoaurfid.jpg").idCardNumber("987654321012").address("604 đường Bà Triệu, Thị Trấn Hậu Lộc, huyện Hậu Lộc, tỉnh Thanh Hóa").contractType("Hợp đồng lao động có thời hạn 1 năm").password(passwordEncoder.encode("123456")).build());
                 User teacher_4 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("ChiNT.pms@gmail.com").phone("0968711752").username("ChiNT").fullName("Nguyễn Thùy Chi").imageLink("https://res.cloudinary.com/dhb38seql/image/upload/v1730013082/onrehbphd1stpicqzurd.jpg").idCardNumber("321654987123").address("56 Phố Huế, Quận Hai Bà Trưng, Hà Nội").contractType("Hợp đồng lao động có thời hạn 1 năm").password(passwordEncoder.encode("123456")).build());
                 User teacher_5 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("MaiTN.pms@gmail.com").phone("0987658632").username("MaiTN").fullName("Trần Ngọc Mai").imageLink("https://res.cloudinary.com/dhb38seql/image/upload/v1730013202/tcrcxtk0tq122vxqpvfk.jpg").idCardNumber("445566778899").address("123 Đường Thanh Niên, Ba Đình, Hà Nội").contractType("Hợp đồng lao động không xác định thời hạn").password(passwordEncoder.encode("123456")).build());
-                User teacher_6 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("ThanhPT.pms@gmail.com").phone("0973344556").username("ThanhPT").fullName("Phạm Thị Thanh").idCardNumber("112233445566").address("90 Đường Giải Phóng, Quận Hai Bà Trưng, Hà Nội").contractType("Hợp đồng lao động có thời hạn 2 năm").password(passwordEncoder.encode("123456")).build());
                 User teacher_7 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("HoaLT.pms@gmail.com").phone("0911223344").username("HoaLT").fullName("Lê Thị Hoa").idCardNumber("556677889900").address("15 Đường Kim Mã, Quận Ba Đình, Hà Nội").contractType("Hợp đồng lao động không xác định thời hạn").password(passwordEncoder.encode("123456")).build());
                 User teacher_8 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("BinhPT.pms@gmail.com").phone("0909988776").username("BinhPT").fullName("Phan Thị Bình").idCardNumber("998877665544").address("72 Đường Tây Sơn, Quận Đống Đa, Hà Nội").contractType("Hợp đồng lao động có thời hạn 6 tháng").password(passwordEncoder.encode("123456")).build());
-                User teacher_9 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("MinhTD.pms@gmail.com").phone("0933445566").username("MinhTD").fullName("Trần Thị Minh").idCardNumber("334455667788").address("47 Đường Nguyễn Lương Bằng, Quận Đống Đa, Hà Nội").contractType("Hợp đồng lao động không xác định thời hạn").password(passwordEncoder.encode("123456")).build());
-                User teacher_10 = userRepo.save(User.builder().role(RoleEnums.TEACHER).isActive(true).email("LanPT.pms@gmail.com").phone("0945566778").username("LanPT").fullName("Phan Thị Lan").idCardNumber("776655443322").address("32 Đường Bạch Mai, Quận Hai Bà Trưng, Hà Nội").contractType("Hợp đồng lao động có thời hạn 1 năm").password(passwordEncoder.encode("123456")).build());
 
                 //Class manager
                 User classManager_1 = userRepo.save(User.builder().role(RoleEnums.CLASS_MANAGER).isActive(true).email("LienLT.pms@gmail.com").phone("0966658732").username("LienLT").fullName("Lê Thị Liên").imageLink("https://res.cloudinary.com/dhb38seql/image/upload/v1730013615/yotjwpxn3b8oj9gnolkk.jpg").idCardNumber("445566778899").address("123 Đường Thanh Niên, Ba Đình, Hà Nội").password(passwordEncoder.encode("123456")).build());
@@ -116,7 +113,6 @@ public class DataInitializer {
                         User.builder().role(RoleEnums.TRANSPORT_MANAGER).isActive(true).email("HieuTT.pms@gmail.com").phone("0984096634").username("HieuTT").fullName("Trần Tiến Hiếu").idCardNumber("038702010764").address("789 Đường Kim Mã, Ba Đình, Hà Nội").password(passwordEncoder.encode("123456")).build(),
                         User.builder().role(RoleEnums.TRANSPORT_MANAGER).isActive(true).email("MaiLT.pms@gmail.com").phone("0984096635").username("MaiLT").fullName("Lê Thị Mai").idCardNumber("038702010765").address("101 Đường Hoàng Hoa Thám, Ba Đình, Hà Nội").password(passwordEncoder.encode("123456")).build(),
                         User.builder().role(RoleEnums.TRANSPORT_MANAGER).isActive(true).email("QuanNV.pms@gmail.com").phone("0984096636").username("QuanNV").fullName("Nguyễn Văn Quân").idCardNumber("038702010766").address("202 Đường Láng Hạ, Đống Đa, Hà Nội").password(passwordEncoder.encode("123456")).build()));
-
 
                 //Data for class
                 if (classRepo.count() == 0) {

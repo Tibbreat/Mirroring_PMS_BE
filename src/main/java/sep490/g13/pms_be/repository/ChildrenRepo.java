@@ -27,10 +27,9 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
             "AND (:childName IS NULL OR LOWER(ch.childName) LIKE LOWER(CONCAT('%', :childName, '%'))) " +
             "AND sc.status NOT IN (sep490.g13.pms_be.utils.enums.StudyStatusEnums.MOVED_OUT) " +
             "ORDER BY ch.childName")
-    Page<ChildrenListResponse> findChildrenByFilter(
-            @Param("academicYear") String academicYear,
-            @Param("childName") String childName,
-            Pageable pageable);
+    Page<ChildrenListResponse> findChildrenByFilter(@Param("academicYear") String academicYear,
+                                                    @Param("childName") String childName,
+                                                    Pageable pageable);
 
 
     @Query("SELECT new sep490.g13.pms_be.model.response.children.ChildrenDetailResponse(" +
@@ -155,8 +154,7 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
             + "JOIN c.relationships r "
             + "JOIN r.parentId p "
             + "WHERE t.id = :teacherId "
-            + "AND p.username IS NOT NULL"
-    )
+            + "AND p.username IS NOT NULL")
     List<ChildrenOptionResponse> findChildrenByTeacherId(String teacherId);
 
     @Query("SELECT c.id FROM Children c WHERE c.vehicle.id IN :vehicleIds")
@@ -164,4 +162,13 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
 
     @Query("SELECT c.id FROM Children c WHERE c.vehicle.id IN :vehicleId")
     List<String> getChildrenIdsByVehicleId(String vehicleId);
+
+    @Query("SELECT COUNT(ch.id) > 0 FROM Children ch " +
+            "LEFT JOIN Relationship father ON father.childrenId.id = ch.id AND father.relationship = 'Father' " +
+            "LEFT JOIN Relationship mother ON mother.childrenId.id = ch.id AND mother.relationship = 'Mother' " +
+            "WHERE ch.childName = :childrenName " +
+            "AND (father.parentId.idCardNumber = :fatherIdNumber OR father.parentId.idCardNumber IS NULL) " +
+            "AND (mother.parentId.idCardNumber = :motherIdNumber OR mother.parentId.idCardNumber IS NULL)")
+    boolean childrenAlreadyExist(String childrenName, String fatherIdNumber, String motherIdNumber);
+
 }

@@ -94,9 +94,9 @@ public class ClassController {
                 .build());
     }
 
-    @GetMapping("/available/{academicYear}")
-    public ResponseEntity<?> getAvailableClassOption(@PathVariable String academicYear) {
-        return ResponseEntity.ok(classService.getAvailableClassOption(academicYear));
+    @GetMapping("/available/{academicYear}/manager/{managerId}")
+    public ResponseEntity<?> getAvailableClassOption(@PathVariable String academicYear, @PathVariable String managerId) {
+        return ResponseEntity.ok(classService.getAvailableClassOption(academicYear, managerId));
     }
 
     @GetMapping("/{managerId}")

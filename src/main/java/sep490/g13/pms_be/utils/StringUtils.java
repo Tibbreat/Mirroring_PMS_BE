@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 @Service
@@ -50,5 +52,26 @@ public class StringUtils {
             result.append(CHARACTERS.charAt(index));
         }
         return result.toString();
+    }
+
+    public static int calculateAge(LocalDate childBirthDate) {
+        LocalDate currentDate = LocalDate.now();
+        Period period = Period.between(childBirthDate, currentDate);
+        return period.getYears();
+    }
+
+    public static  boolean isAgeInRange(LocalDate childBirthDate, String ageRange){
+        int childrenAge = calculateAge(childBirthDate);
+        String [] rangeParts = ageRange.split("-");
+        try {
+            int ageStart = Integer.parseInt(rangeParts[0]);
+            int ageEnd = Integer.parseInt(rangeParts[1]);
+            System.out.println("age: " + childrenAge);
+            System.out.println("range: " + ageRange);
+            System.out.println("valid: " + (childrenAge >= ageStart && childrenAge <= ageEnd));
+            return childrenAge >= ageStart && childrenAge <= ageEnd;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

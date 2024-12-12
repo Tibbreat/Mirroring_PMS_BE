@@ -58,21 +58,21 @@ public class ClassService {
             case "3-4":
                 int maxClassLevel_1 = academicYearInformation.getTotalClassLevel1();
                 if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "3-4") >= maxClassLevel_1) {
-                    throw new PermissionNotAcceptException("Số lớp 3-4 đã đạt tối đa");
+                    throw new IllegalArgumentException("Số lớp 3-4 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel1());
                 break;
             case "4-5":
                 int maxClassLevel_2 = academicYearInformation.getTotalClassLevel2();
                 if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "4-5") >= maxClassLevel_2) {
-                    throw new PermissionNotAcceptException("Số lớp 4-5 đã đạt tối đa");
+                    throw new IllegalArgumentException("Số lớp 4-5 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel2());
                 break;
             case "5-6":
                 int maxClassLevel_3 = academicYearInformation.getTotalClassLevel3();
                 if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "5-6") >= maxClassLevel_3) {
-                    throw new PermissionNotAcceptException("Số lớp 5-6 đã đạt tối đa");
+                    throw new IllegalArgumentException("Số lớp 5-6 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel3());
                 break;
@@ -110,7 +110,6 @@ public class ClassService {
         Classes savedClass = classRepo.save(newClass);
         classTeacherService.addTeacherIntoClass(savedClass.getId(), classRequest.getTeacherId());
     }
-
 
     public User validateManager(String managerId) {
         User manager = userRepo.findById(managerId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy người quản lý với id: " + managerId));
@@ -150,8 +149,8 @@ public class ClassService {
                 .collect(Collectors.toList());
     }
 
-    public List<ListAvailableClassOption> getAvailableClassOption(String academicYear) {
-        return classRepo.listAvailableClassOptions(academicYear);
+    public List<ListAvailableClassOption> getAvailableClassOption(String academicYear, String managerId) {
+        return classRepo.listAvailableClassOptions(academicYear, managerId);
     }
 
     public List<ListAvailableClassOption> getAvailableClassOptionToTransfer(String academicYear, String childrenId) {

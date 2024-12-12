@@ -31,4 +31,9 @@ public class Constant {
     public static final String NOT_BLANK_PASSWORD_MESSAGE = "Mật khẩu không được để trống";
     public static final String NOT_BLANK_CONFIRM_PASSWORD_MESSAGE = "Mật khẩu xác nhận không được để trống";
     public static final String NOT_BLANK_USERNAME_MESSAGE = "Tên đăng nhập không được để trống";
+
+
+    public static final String CLASS_FULL_SLOT = "Lớp học đã đủ số lượng học sinh";
+
+    public static final String CHILDREN_EXISTED = "Thông tin trẻ đã có trong dữ liệu";
 }
