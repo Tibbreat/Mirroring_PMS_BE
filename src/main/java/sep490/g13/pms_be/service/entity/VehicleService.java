@@ -52,7 +52,9 @@ public class VehicleService {
         // Kiểm tra xem provider có tồn tại không
         TransportServiceProvider provider = transportRepo.findById(request.getProviderId())
                 .orElseThrow(() -> new DataNotFoundException("Provider not found"));
-
+        if (vehicleRepo.existsByLicensePlate(request.getLicensePlate())) {
+            throw new IllegalArgumentException("Thông tin xe có biển số + " + request.getLicensePlate() + " đã tồn tại");
+        }
         // Kiểm tra số lượng phương tiện của provider
         int count = vehicleRepo.countByTransport_Id(request.getProviderId());
         if (count >= provider.getTotalVehicle()) {
@@ -135,7 +137,7 @@ public class VehicleService {
 
         //Hủy trạng thái đăng ký đưa đón của trẻ.
         List<String> childrenIds = childrenRepo.getChildrenIdsByVehicleId(vehicleId);
-        for(String childrenId : childrenIds){
+        for (String childrenId : childrenIds) {
             childrenService.updateServiceStatus(childrenId, "transport", null, null);
         }
         vehicle.setRoute(null);

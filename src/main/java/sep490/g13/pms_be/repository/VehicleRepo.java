@@ -54,4 +54,7 @@ public interface VehicleRepo extends JpaRepository<Vehicle, String> {
     Vehicle findVehicleByManagerId(String managerId);
 
     List<Vehicle> findAllByRouteIdOrderByNumberOfSeatsDesc(String routeId);
+
+    @Query("SELECT (COUNT(v.id) > 0) FROM Vehicle v WHERE v.licensePlate = :licensePlate")
+    boolean existsByLicensePlate(String licensePlate);
 }
