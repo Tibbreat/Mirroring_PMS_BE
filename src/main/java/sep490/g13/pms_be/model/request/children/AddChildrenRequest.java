@@ -1,6 +1,6 @@
 package sep490.g13.pms_be.model.request.children;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,19 +13,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class AddChildrenRequest {
-    @NotNull
+    @NotEmpty(message = "Tên trẻ không được để trống")
     private String childName;
-    @NotNull
+    @NotEmpty(message = "Ngày sinh không được để trống")
     private LocalDate childBirthDate;
-    @NotNull
+    @NotEmpty(message = "Địa chỉ không được để trống")
     private String childAddress;
-    @NotNull
+    @NotEmpty(message = "Địa chỉ khai sinh không được để trống")
     private String birthAddress;
-    @NotNull
+    @NotEmpty(message = "Quốc tịch không được để trống")
     private String nationality;
-    @NotNull
+    @NotEmpty(message = "Dân tộc không được để trống")
     private String religion;
-    @NotNull
+    @NotEmpty(message = "Giới tính không được để trống")
     private String gender;
 
     private AddParentRequest father;
@@ -39,4 +39,6 @@ public class AddChildrenRequest {
     private String createdBy;
 
     private String classId;
+
+    private boolean isDuplicate;
 }

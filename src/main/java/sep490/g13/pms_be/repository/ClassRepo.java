@@ -136,5 +136,9 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
             "WHERE c.academicYear = :academicYear")
     DailyReport countChildrenByAgeRange(@Param("academicYear") String academicYear);
 
+    @Query("SELECT (COUNT(c.id) > 0) FROM Classes c " +
+            "WHERE c.academicYear = :academicYear " +
+            "AND c.className = :className")
+    boolean checkClassExits(String className, String academicYear);
 
 }

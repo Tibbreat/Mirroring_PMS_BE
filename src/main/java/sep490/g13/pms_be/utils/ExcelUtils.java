@@ -1,16 +1,23 @@
 package sep490.g13.pms_be.utils;
 
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sep490.g13.pms_be.model.request.children.AddChildrenRequest;
 import sep490.g13.pms_be.model.request.children.AddParentRequest;
+import sep490.g13.pms_be.repository.ChildrenRepo;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 
+@Service
 public class ExcelUtils {
+
+    @Autowired
+    ChildrenRepo childrenRepo;
 
     public static boolean isValidExcelFile(MultipartFile file) {
         String contentType = file.getContentType();
@@ -18,7 +25,7 @@ public class ExcelUtils {
                 "application/vnd.ms-excel".equals(contentType);
     }
 
-    public static List<AddChildrenRequest> getChildrenDataFromExcel(InputStream inputStream) {
+    public List<AddChildrenRequest> getChildrenDataFromExcel(InputStream inputStream) {
         List<AddChildrenRequest> lc = new ArrayList<>();
         Set<String> uniqueRowIdentifiers = new HashSet<>();
 
@@ -71,7 +78,11 @@ public class ExcelUtils {
                     uniqueRowIdentifiers.add(uniqueIdentifier);
                     lc.add(addChildRequest);
                 }
-
+                for (AddChildrenRequest child : lc) {
+                    if (childrenRepo.childrenAlreadyExist(child.getChildName(), child.getFather().getIdCardNumber(), child.getMother().getIdCardNumber())) {
+                        child.setDuplicate(true);
+                    }
+                }
                 rowIndex++;
             }
         } catch (IOException e) {
@@ -79,6 +90,7 @@ public class ExcelUtils {
         }
         return lc;
     }
+
     private static String getColumnName(int columnNumber) {
         StringBuilder columnName = new StringBuilder();
         while (columnNumber > 0) {
@@ -88,6 +100,7 @@ public class ExcelUtils {
         }
         return columnName.toString();
     }
+
     private static void validateColumnCount(Sheet sheet, int requiredColumnCount) {
         Row headerRow = sheet.getRow(0);
         if (headerRow == null || headerRow.getPhysicalNumberOfCells() != requiredColumnCount) {
@@ -127,7 +140,6 @@ public class ExcelUtils {
             throw new RuntimeException("Invalid gender value '" + gender + "' at column " + cellIndex + " in row " + rowIndex);
         }
     }
-
 
 
     private static Boolean getBooleanValue(Row row, int cellIndex, int rowIndex) {

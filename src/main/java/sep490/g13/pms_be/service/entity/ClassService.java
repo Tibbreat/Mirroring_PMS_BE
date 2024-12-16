@@ -42,9 +42,15 @@ public class ClassService {
     private ChildrenClassRepo childrenClassRepo;
 
     public Classes createNewClass(AddClassRequest classRequest) {
+
+        //Check class exist
+        if (classRepo.checkClassExits(classRequest.getClassName(), classRequest.getAcademicYear())) {
+            throw new IllegalArgumentException("Lớp học có tên " + classRequest.getClassName() + " tồn tại trong năm học " + classRequest.getAcademicYear());
+        }
         Classes newClass = new Classes();
         BeanUtils.copyProperties(classRequest, newClass);
         User manager = validateManager(classRequest.getManagerId());
+        newClass.setClassName(classRequest.getClassName().trim());
         newClass.setManager(manager);
         newClass.setStatus(ClassStatusEnums.IN_PROGRESS);
         validateCreatedBy(classRequest.getCreatedBy());
@@ -57,21 +63,21 @@ public class ClassService {
         switch (classRequest.getAgeRange()) {
             case "3-4":
                 int maxClassLevel_1 = academicYearInformation.getTotalClassLevel1();
-                if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "3-4") >= maxClassLevel_1) {
+                if (classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "3-4") >= maxClassLevel_1) {
                     throw new IllegalArgumentException("Số lớp 3-4 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel1());
                 break;
             case "4-5":
                 int maxClassLevel_2 = academicYearInformation.getTotalClassLevel2();
-                if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "4-5") >= maxClassLevel_2) {
+                if (classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "4-5") >= maxClassLevel_2) {
                     throw new IllegalArgumentException("Số lớp 4-5 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel2());
                 break;
             case "5-6":
                 int maxClassLevel_3 = academicYearInformation.getTotalClassLevel3();
-                if(classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "5-6") >= maxClassLevel_3) {
+                if (classRepo.countClassesByAcademicYearAndAgeRange(classRequest.getAcademicYear(), "5-6") >= maxClassLevel_3) {
                     throw new IllegalArgumentException("Số lớp 5-6 đã đạt tối đa");
                 }
                 newClass.setTotalStudent(academicYearInformation.getTotalStudentLevel3());
@@ -165,7 +171,8 @@ public class ClassService {
     public List<ListClassWithStudyStatus> findAllByChildrenId(String childrenId) {
         return classRepo.findAllByChildrenId(childrenId);
     }
-    public DailyReport report(String academicYear){
+
+    public DailyReport report(String academicYear) {
         return classRepo.countChildrenByAgeRange(academicYear);
     }
 

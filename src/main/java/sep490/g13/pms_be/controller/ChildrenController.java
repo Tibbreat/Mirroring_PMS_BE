@@ -142,8 +142,7 @@ public class ChildrenController {
 
     @PostMapping("/excel/import")
     public ResponseEntity<List<AddChildrenRequest>> uploadCustomersData(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity
-                .ok(childrenService.convertChildrenDataFromExcel(file));
+        return ResponseEntity.ok(childrenService.convertChildrenDataFromExcel(file));
     }
 
     @PostMapping("/excel/import/save")

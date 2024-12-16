@@ -66,14 +66,26 @@ public class ChildrenService {
     private StopLocationRepo stopLocationRepo;
     @Autowired
     private RouteSubmittedApplicationRepo routeSubmittedApplicationRepo;
+    @Autowired
+    private ExcelUtils excelUtils;
+
 
     @Transactional
     public Children addChildren(AddChildrenRequest request, MultipartFile image) {
-        if (checkExistChildren(request.getChildName(), request.getFather().getIdCardNumber(), request.getMother().getIdCardNumber())) {
+        if (childrenRepo.childrenAlreadyExist(request.getChildName().trim(), request.getFather().getIdCardNumber().trim(), request.getMother().getIdCardNumber().trim())) {
             throw new DataAlreadyExistException("Thông tin của " + request.getChildName() + " đã tồn tại");
         }
 
-        Children children = Children.builder().childName(request.getChildName()).childBirthDate(request.getChildBirthDate()).childAddress(request.getChildAddress()).birthAddress(request.getBirthAddress()).gender(request.getGender()).religion(request.getReligion()).nationality(request.getNationality()).isRegisteredForBoarding(Boolean.FALSE).isRegisteredForTransport(Boolean.FALSE).build();
+        Children children = Children.builder().
+                childName(request.getChildName().trim())
+                .childBirthDate(request.getChildBirthDate())
+                .childAddress(request.getChildAddress().trim())
+                .birthAddress(request.getBirthAddress().trim())
+                .gender(request.getGender().trim())
+                .religion(request.getReligion().trim())
+                .nationality(request.getNationality().trim())
+                .isRegisteredForBoarding(Boolean.FALSE)
+                .isRegisteredForTransport(Boolean.FALSE).build();
         children.setCreatedBy(request.getCreatedBy());
 
 
@@ -109,7 +121,7 @@ public class ChildrenService {
             }
 
             if (motherExist != null) {
-                relationshipRepo.save(Relationship.builder().childrenId(newChildren)  // Sử dụng `newChildren` đã được lưu
+                relationshipRepo.save(Relationship.builder().childrenId(newChildren)
                         .parentId(motherExist).relationship("Mother").build());
             }
         } else {
@@ -127,9 +139,6 @@ public class ChildrenService {
         return newChildren;
     }
 
-    public boolean checkExistChildren(String childrenName, String fatherIdNumber, String motherIdNumber) {
-        return childrenRepo.childrenAlreadyExist(childrenName, fatherIdNumber, motherIdNumber);
-    }
 
     public Page<ChildrenListResponse> findChildrenByFilter(String academicYear, String childName, int page, int size) {
         return childrenRepo.findChildrenByFilter(academicYear, childName, PageRequest.of(page, size));
@@ -515,11 +524,10 @@ public class ChildrenService {
         }
     }
 
-
     public List<AddChildrenRequest> convertChildrenDataFromExcel(MultipartFile file) {
         if (ExcelUtils.isValidExcelFile(file)) {
             try {
-                return ExcelUtils.getChildrenDataFromExcel(file.getInputStream());
+                return excelUtils.getChildrenDataFromExcel(file.getInputStream());
             } catch (IOException e) {
                 throw new IllegalArgumentException("The file is not a valid excel file");
             }

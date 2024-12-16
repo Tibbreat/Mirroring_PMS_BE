@@ -28,6 +28,3 @@ public class SwaggerConfig {
                         .version("1.0.0"));
     }
 }
-
-//http://localhost:8080/swagger-ui.html
-//http://157.66.27.65:9999/swagger-ui.html

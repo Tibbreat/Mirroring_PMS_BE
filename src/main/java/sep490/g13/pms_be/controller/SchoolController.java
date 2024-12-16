@@ -1,7 +1,9 @@
 package sep490.g13.pms_be.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sep490.g13.pms_be.entities.School;
 import sep490.g13.pms_be.model.request.school.AcademicInformationRequest;
@@ -25,13 +27,19 @@ public class SchoolController {
     }
 
     @PutMapping("/update-academic-information")
-    public ResponseEntity<Void> updateAcademicInformation(@RequestBody AcademicInformationRequest request) {
+    public ResponseEntity<Void> updateAcademicInformation(@RequestBody @Valid AcademicInformationRequest request, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         schoolService.updateAcademicInformation(request);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update-school-information")
-    public ResponseEntity<ResponseModel<?>> updateSchoolInformation(@RequestBody UpdateSchoolRequest request) {
+    public ResponseEntity<ResponseModel<?>> updateSchoolInformation(@RequestBody @Valid UpdateSchoolRequest request, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(ResponseModel.<School>builder()
                 .data(schoolService.updateSchoolInformation(request))
                 .message("School information updated successfully")
