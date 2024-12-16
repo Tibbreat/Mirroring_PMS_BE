@@ -85,7 +85,6 @@ public class ChildrenService {
                 throw new IllegalArgumentException("Tuổi hiện tại của " + request.getChildName() + " hiện tại không phù hợp với độ tuổi của lớp");
             }
 
-
             int countChildren = childrenClassRepo.countChildrenByClassId(request.getClassId());
             if (countChildren >= aClass.getTotalStudent()) {
                 throw new IllegalArgumentException(Constant.CLASS_FULL_SLOT);
@@ -150,6 +149,10 @@ public class ChildrenService {
         Classes oldClass = classRepo.findById(oldClassId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
         Classes newClass = classRepo.findById(newClassId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
 
+
+        if (!StringUtils.isAgeInRange(children.getChildBirthDate(), newClass.getAgeRange())) {
+            throw new IllegalArgumentException("Tuổi hiện tại của " + children.getChildName() + " hiện tại không phù hợp với độ tuổi của lớp");
+        }
         // Check if the new class has enough slots
         int countChildren = childrenClassRepo.countChildrenByClassId(newClassId);
         if (countChildren >= newClass.getTotalStudent()) {
@@ -163,9 +166,7 @@ public class ChildrenService {
         ccOld.setCountAbsent(0);
         childrenClassRepo.save(ccOld);
 
-        ChildrenClass ccNew = childrenClassRepo.findByChildrenIdAndClassesId(childrenId, newClassId, StudyStatusEnums.STUDYING);
-        ccNew.setCountAbsent(oldCountAbsent);
-        childrenClassRepo.save(ccNew);
+
 
         //Add new class for children
         childrenClassRepo.save(ChildrenClass.builder()
@@ -175,6 +176,9 @@ public class ChildrenService {
                 .status(StudyStatusEnums.STUDYING)
                 .build());
 
+        ChildrenClass ccNew = childrenClassRepo.findByChildrenIdAndClassesId(childrenId, newClassId, StudyStatusEnums.STUDYING);
+        ccNew.setCountAbsent(oldCountAbsent);
+        childrenClassRepo.save(ccNew);
         // Update count children registered transport
         if (children.getIsRegisteredForTransport()) {
             classRepo.updateCountStudentRegisteredTransport(oldClassId, oldClass.getCountChildrenRegisteredTransport() - 1);

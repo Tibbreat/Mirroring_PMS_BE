@@ -175,6 +175,7 @@ public class ChildrenController {
 
     @PutMapping("/transfer-class")
     public ResponseEntity<ResponseModel<?>> transferClass(@RequestBody TransferClassRequest request) {
+        System.out.println(request.toString());
         childrenService.transferClass(request.getChildrenId(), request.getOldClassId(), request.getNewClassId());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseModel.<String>builder()
