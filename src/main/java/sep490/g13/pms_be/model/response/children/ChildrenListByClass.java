@@ -19,4 +19,5 @@ public class ChildrenListByClass {
     private String gender;
     private boolean isRegisteredForBoarding;
     private boolean isRegisteredForTransport;
+    private boolean isDisable;
 }

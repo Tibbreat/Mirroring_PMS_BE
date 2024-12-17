@@ -165,6 +165,11 @@ public class ChildrenService {
         Classes oldClass = classRepo.findById(oldClassId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
         Classes newClass = classRepo.findById(newClassId).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
 
+        //Check number of disable children in new class
+        int countChildrenDisableInClass = childrenClassRepo.countDisabledChildrenByClassId(newClassId);
+        if (countChildrenDisableInClass == 2) {
+            throw new IllegalArgumentException("Lớp đã có 2 trẻ bị khuyết tật. Không thể chuyển sang.");
+        }
 
         if (!StringUtils.isAgeInRange(children.getChildBirthDate(), newClass.getAgeRange())) {
             throw new IllegalArgumentException("Tuổi hiện tại của " + children.getChildName() + " hiện tại không phù hợp với độ tuổi của lớp");

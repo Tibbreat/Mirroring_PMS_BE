@@ -19,7 +19,7 @@ public interface ChildrenClassRepo extends JpaRepository<ChildrenClass, String> 
             "AND cc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING ")
     int countChildrenByClassId(String classId);
 
-    @Query("SELECT COUNT(cc.id) FROM ChildrenClass cc WHERE cc.classes.id = :classId AND cc.children.isDisabled = true")
+    @Query("SELECT COUNT(cc.id) FROM ChildrenClass cc WHERE cc.classes.id = :classId AND cc.children.isDisabled = true AND cc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING" )
     int countDisabledChildrenByClassId(String classId);
 
     @Query("SELECT cc.classes FROM ChildrenClass cc" +

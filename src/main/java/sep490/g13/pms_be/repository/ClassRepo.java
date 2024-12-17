@@ -63,7 +63,7 @@ public interface ClassRepo extends JpaRepository<Classes, String> {
             "AND c.status IN (sep490.g13.pms_be.utils.enums.ClassStatusEnums.NOT_STARTED, " +
             "                 sep490.g13.pms_be.utils.enums.ClassStatusEnums.IN_PROGRESS) " +
             "GROUP BY c.id, c.className, c.ageRange, ct.teacherId.fullName, ct.teacherId.username, c.totalStudent " +
-            "HAVING c.totalStudent > COUNT(cc.id)")
+            "HAVING c.totalStudent > COUNT(CASE WHEN cc.status = sep490.g13.pms_be.utils.enums.StudyStatusEnums.STUDYING THEN cc.id END)")
     List<ListAvailableClassOption> listAvailableClassOptions(@Param("academicYear") String academicYear,
                                                              @Param("managerId") String managerId);
 

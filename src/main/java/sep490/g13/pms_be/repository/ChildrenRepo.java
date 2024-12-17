@@ -61,7 +61,7 @@ public interface ChildrenRepo extends JpaRepository<Children, String> {
 
     @Query("SELECT new sep490.g13.pms_be.model.response.children.ChildrenListByClass(" +
             "c.id, c.imageUrl, c.childName, c.childBirthDate, c.gender, " +
-            "c.isRegisteredForBoarding, c.isRegisteredForTransport) " +
+            "c.isRegisteredForBoarding, c.isRegisteredForTransport, c.isDisabled) " +
             "FROM Children c " +
             "LEFT JOIN c.childrenClasses cc ON c.id = cc.children.id " +
             "WHERE cc.classes.id = :classId " +
