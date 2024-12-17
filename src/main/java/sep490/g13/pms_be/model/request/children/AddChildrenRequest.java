@@ -1,6 +1,7 @@
 package sep490.g13.pms_be.model.request.children;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 public class AddChildrenRequest {
     @NotEmpty(message = "Tên trẻ không được để trống")
     private String childName;
-    @NotEmpty(message = "Ngày sinh không được để trống")
+    @NotNull(message = "Ngày sinh không được để trống")
     private LocalDate childBirthDate;
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String childAddress;

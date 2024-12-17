@@ -85,7 +85,10 @@ public class ChildrenService {
                 .religion(request.getReligion().trim())
                 .nationality(request.getNationality().trim())
                 .isRegisteredForBoarding(Boolean.FALSE)
-                .isRegisteredForTransport(Boolean.FALSE).build();
+                .isRegisteredForTransport(Boolean.FALSE)
+                .isDisabled(request.getIsDisabled())
+                .note(request.getNote())
+                .build();
         children.setCreatedBy(request.getCreatedBy());
 
 
@@ -95,6 +98,10 @@ public class ChildrenService {
             Classes aClass = classRepo.findById(request.getClassId()).orElseThrow(() -> new DataNotFoundException("Không tìm thấy dữ liệu của lớp học"));
             if (!StringUtils.isAgeInRange(request.getChildBirthDate(), aClass.getAgeRange())) {
                 throw new IllegalArgumentException("Tuổi hiện tại của " + request.getChildName() + " hiện tại không phù hợp với độ tuổi của lớp");
+            }
+            int countChildrenDisableInClass = childrenClassRepo.countDisabledChildrenByClassId(request.getClassId());
+            if (countChildrenDisableInClass > 2 || (request.getIsDisabled() && countChildrenDisableInClass == 2)) {
+                throw new IllegalArgumentException("Lớp đã có 2 trẻ bị khuyết tật. Không thể thêm trẻ.");
             }
 
             int countChildren = childrenClassRepo.countChildrenByClassId(request.getClassId());
@@ -174,7 +181,6 @@ public class ChildrenService {
         int oldCountAbsent = ccOld.getCountAbsent();
         ccOld.setCountAbsent(0);
         childrenClassRepo.save(ccOld);
-
 
 
         //Add new class for children
